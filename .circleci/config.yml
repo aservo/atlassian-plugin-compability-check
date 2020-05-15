@@ -1,0 +1,66 @@
+version: 2.1
+
+executors:
+  maven:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    working_directory: /tmp/build
+
+jobs:
+  build:
+    executor: maven
+    steps:
+      - checkout
+      - restore_cache:
+          key: apcc-{{ checksum "pom.xml" }}
+      - run:
+          name: Download Dependencies
+          command: ./mvnw dependency:go-offline
+      - run:
+          name: Compile and Package
+          command: ./mvnw package -DskipTests
+      - run:
+          name: Copy Artifacts into separate Directory
+          command: mkdir -p /tmp/artifacts && cp target/*.jar /tmp/artifacts
+      - store_artifacts:
+          path: /tmp/artifacts
+      - persist_to_workspace:
+          root: /tmp/build
+          paths:
+            - .
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: apcc-{{ checksum "pom.xml" }}
+  deploy:
+    executor: maven
+    steps:
+      - attach_workspace:
+          at: /tmp/build
+      - restore_cache:
+          key: apcc-{{ checksum "pom.xml" }}
+      - run:
+          name: Decrypt Signing Key
+          command: openssl aes-256-cbc -S ${SIGN_ASC_SALT} -K ${SIGN_ASC_KEY} -iv ${SIGN_ASC_IV} -in .circleci/sign.asc.enc -out .circleci/sign.asc -d
+      - run:
+          name: Import Signing Key
+          command: gpg --no-tty --batch --import .circleci/sign.asc
+      - run:
+          name: Deploy to Maven Central
+          command: export GPG_TTY=$(tty) && ./mvnw -s .circleci/settings.xml -DskipTests deploy
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: apcc-{{ checksum "pom.xml" }}
+
+workflows:
+  main:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+          context: deploy-maven
