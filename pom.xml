@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>atlassian-plugin-compatibility-check</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>Atlassian Plugin Compatibility Check</name>
@@ -33,7 +33,7 @@
         <connection>scm:git:git://github.com/aservo/atlassian-plugin-compatibility-check.git</connection>
         <developerConnection>scm:git:git@github.com:aservo/atlassian-plugin-compatibility-check.git</developerConnection>
         <url>https://github.com/aservo/atlassian-plugin-compatibility-check</url>
-      <tag>v0.0.1</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <developers>
