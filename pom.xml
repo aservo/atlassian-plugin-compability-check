@@ -13,6 +13,38 @@
 
     <artifactId>atlassian-plugin-compatibility-check</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>Atlassian Plugin Compatibility Check</name>
+    <description>Command line tool that allows finding the range of compatible Atlassian products</description>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <issueManagement>
+        <system>Github</system>
+        <url>https://github.com/aservo/atlassian-plugin-compatibility-check/issues</url>
+    </issueManagement>
+
+    <scm>
+        <connection>scm:git:git://github.com/aservo/atlassian-plugin-compatibility-check.git</connection>
+        <developerConnection>scm:git:git@github.com:aservo/atlassian-plugin-compatibility-check.git</developerConnection>
+        <url>https://github.com/aservo/atlassian-plugin-compatibility-check</url>
+    </scm>
+
+    <developers>
+        <developer>
+            <name>Patrick Hobusch</name>
+            <email>phobusch@aservo.com</email>
+            <organization>ASERVO Software GmbH</organization>
+            <organizationUrl>https://www.aservo.com</organizationUrl>
+        </developer>
+    </developers>
 
     <properties>
         <maven.version>3.6.3</maven.version>
