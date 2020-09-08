@@ -29,7 +29,9 @@ public class VersionFetcher {
 
     static {
         URLS = new HashMap<>();
-        URLS.put("jira", "https://packages.atlassian.com/maven/repository/public/com/atlassian/jira/jira-api/maven-metadata.xml");
+        URLS.put("bitbucket", "https://packages.atlassian.com/mvn/maven-external/com/atlassian//bitbucket/server/bitbucket-parent/maven-metadata.xml");
+        URLS.put("crowd", "https://packages.atlassian.com/maven-external/com/atlassian/crowd/atlassian-crowd/maven-metadata.xml");
+        URLS.put("jira", "https://packages.atlassian.com/mvn/maven-external/com/atlassian/jira/jira-api/maven-metadata.xml");
     }
 
     private final String product;
