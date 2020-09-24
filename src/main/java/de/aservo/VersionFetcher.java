@@ -21,24 +21,26 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static de.aservo.Product.*;
+
 public class VersionFetcher {
 
     public static final String VERSION_EXPRESSION = "\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}";
 
-    public static final Map<String, String> URLS;
+    public static final Map<Product, String> URLS;
 
     static {
         URLS = new HashMap<>();
-        URLS.put("bitbucket", "https://packages.atlassian.com/mvn/maven-external/com/atlassian//bitbucket/server/bitbucket-parent/maven-metadata.xml");
-        URLS.put("crowd", "https://packages.atlassian.com/maven-external/com/atlassian/crowd/atlassian-crowd/maven-metadata.xml");
-        URLS.put("jira", "https://packages.atlassian.com/mvn/maven-external/com/atlassian/jira/jira-api/maven-metadata.xml");
+        URLS.put(BITBUCKET, "https://packages.atlassian.com/mvn/maven-external/com/atlassian//bitbucket/server/bitbucket-parent/maven-metadata.xml");
+        URLS.put(CROWD, "https://packages.atlassian.com/maven-external/com/atlassian/crowd/atlassian-crowd/maven-metadata.xml");
+        URLS.put(JIRA, "https://packages.atlassian.com/mvn/maven-external/com/atlassian/jira/jira-api/maven-metadata.xml");
     }
 
-    private final String product;
+    private final Product product;
     private final DefaultArtifactVersion maxVersion;
 
     public VersionFetcher(
-            final String product,
+            final Product product,
             final String productVersion) {
 
         this.product = product;
