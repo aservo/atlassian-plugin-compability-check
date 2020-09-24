@@ -79,6 +79,13 @@ public class VersionList implements Iterable<String> {
             return majorVersion;
         }
 
+        // sometimes, there is no X.0.0, but only X.0.1, so get the next higher version
+        final DefaultArtifactVersion firstMajorVersion = versions.higher(majorVersion);
+
+        if (!firstMajorVersion.equals(version)) {
+            return firstMajorVersion;
+        }
+
         return null;
     }
 
@@ -101,11 +108,18 @@ public class VersionList implements Iterable<String> {
             return getLowerMinor(lowerVersion);
         }
 
-        // otherwise, just construct the main major version
+        // otherwise, just construct the main minor version
         final DefaultArtifactVersion minorVersion = new Version(version.getMajorVersion(), version.getMinorVersion(), 0);
 
         if (versions.contains(minorVersion)) {
             return minorVersion;
+        }
+
+        // sometimes, there is no X.1.0, but only X.1.1, so get the next higher version
+        final DefaultArtifactVersion firstMinorVersion = versions.higher(minorVersion);
+
+        if (!firstMinorVersion.equals(version)) {
+            return firstMinorVersion;
         }
 
         return null;

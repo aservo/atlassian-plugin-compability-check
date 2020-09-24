@@ -32,26 +32,28 @@ public class AtlassianPluginCompatibilityChecker {
         System.out.println(String.format("Testing plugin %s implemented for %s %s for compatibility", model.getArtifactId(), product, productVersion));
         System.out.println();
 
-        for (final String version : versionList) {
-            properties.setProperty(property, version);
-            model.setProperties(properties);
-            MavenPomFileUtil.write(pomFile, model);
+        try {
+            for (final String version : versionList) {
+                properties.setProperty(property, version);
+                model.setProperties(properties);
+                MavenPomFileUtil.write(pomFile, model);
 
-            final int exitCode = new MavenWrapperProcess().getProcessBuilder(pomFile).start().waitFor();
+                final int exitCode = new MavenWrapperProcess().getProcessBuilder(pomFile).start().waitFor();
 
-            if (exitCode == 0) {
-                System.out.println(String.format("Version %s is compatible", version));
-            } else {
-                System.out.println(String.format("Version %s is NOT compatible", version));
-                versionList.setLastFailed();
+                if (exitCode == 0) {
+                    System.out.println(String.format("Version %s is compatible", version));
+                } else {
+                    System.out.println(String.format("Version %s is NOT compatible", version));
+                    versionList.setLastFailed();
+                }
             }
+        } finally {
+            FileUtils.deleteQuietly(pomFile);
+            FileUtils.moveFile(pomFileBackup, pomFile);
         }
 
         System.out.println();
         System.out.println("Last compatible version: " + versionList.getLastSuccessful());
-
-        FileUtils.deleteQuietly(pomFile);
-        FileUtils.moveFile(pomFileBackup, pomFile);
     }
 
 }
