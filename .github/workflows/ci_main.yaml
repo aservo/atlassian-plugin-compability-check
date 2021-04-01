@@ -1,0 +1,73 @@
+name: CI Main
+
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  package:
+
+    runs-on: ubuntu-20.04
+
+    steps:
+    - name: Set up JDK 11
+      uses: actions/setup-java@v1
+      with:
+        java-version: 11
+
+    - name: Checkout Code
+      uses: actions/checkout@v2
+
+    - name: Cache Maven packages
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2
+        key: apcc-${{ hashFiles('**/pom.xml') }}
+        restore-keys: apcc
+
+    - name: Download Dependencies
+      run: ./mvnw dependency:go-offline -U -B
+
+    - name: Build with Maven
+      run: ./mvnw package -DskipTests -B
+
+  deploy:
+    needs: package
+
+    runs-on: ubuntu-20.04
+
+    env:
+      GPG_KEY_NAME: ${{ secrets.GPG_KEY_NAME }}
+      GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+      OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+      OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+      SIGN_ASC_SALT: ${{ secrets.SIGN_ASC_SALT }}
+      SIGN_ASC_KEY: ${{ secrets.SIGN_ASC_KEY }}
+      SIGN_ASC_IV: ${{ secrets.SIGN_ASC_IV }}
+
+    steps:
+    - name: Set up JDK 11
+      uses: actions/setup-java@v1
+      with:
+        java-version: 11
+
+    - name: Checkout Code
+      uses: actions/checkout@v2
+
+    - name: Cache Maven package
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2
+        key: apcc-${{ hashFiles('**/pom.xml') }}
+        restore-keys: apcc
+
+    - name: Decrypt Signing Key
+      run: openssl aes-256-cbc -S ${SIGN_ASC_SALT} -K ${SIGN_ASC_KEY} -iv ${SIGN_ASC_IV} -in .github/workflows/sign.asc.enc -out .github/workflows/sign.asc -d
+
+    - name: Import Signing Key
+      run: gpg --no-tty --batch --import .github/workflows/sign.asc
+
+    - name: Deploy to Maven Central
+      run: export GPG_TTY=$(tty) && ./mvnw -s .github/workflows/settings.xml -DskipTests deploy -B
+
