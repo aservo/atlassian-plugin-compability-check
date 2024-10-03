@@ -47,7 +47,7 @@
 
     <properties>
         <maven.version>3.6.3</maven.version>
-        <commons-io.version>2.7</commons-io.version>
+        <commons-io.version>2.14.0</commons-io.version>
     </properties>
 
     <dependencies>
